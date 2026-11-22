@@ -6,6 +6,7 @@ gem "rails", "~> 8.1.3"
 gem "sqlite3", ">= 2.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
+gem "dotenv-rails", groups: [:development, :test]
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
@@ -48,3 +49,7 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
+
+gem "pg", "~> 1.7"
+
+gem "cloudinary", "~> 2.4"

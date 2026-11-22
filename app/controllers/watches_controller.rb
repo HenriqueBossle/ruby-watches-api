@@ -1,5 +1,6 @@
+
 class WatchesController < ApplicationController
-  before_action :set_watch, only: %i[ show update destroy ]
+  before_action :set_watch, only: %i[show update destroy]
 
   # GET /watches
   def index
@@ -17,19 +18,37 @@ class WatchesController < ApplicationController
   def create
     @watch = Watch.new(watch_params)
 
+    if params[:image].present?
+      result = Cloudinary::Uploader.upload(
+        params[:image],
+        folder: "ruby-watches"
+      )
+
+      @watch.image_url = result["secure_url"]
+    end
+
     if @watch.save
       render json: @watch, status: :created, location: @watch
     else
-      render json: @watch.errors, status: :unprocessable_content
+      render json: @watch.errors, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /watches/1
   def update
+    if params[:image].present?
+      result = Cloudinary::Uploader.upload(
+        params[:image],
+        folder: "ruby-watches"
+      )
+
+      @watch.image_url = result["secure_url"]
+    end
+
     if @watch.update(watch_params)
       render json: @watch
     else
-      render json: @watch.errors, status: :unprocessable_content
+      render json: @watch.errors, status: :unprocessable_entity
     end
   end
 
@@ -39,13 +58,12 @@ class WatchesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_watch
-      @watch = Watch.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def watch_params
-      params.expect(watch: [ :brand, :model, :price ])
-    end
+  def set_watch
+    @watch = Watch.find(params.expect(:id))
+  end
+
+  def watch_params
+    params.expect(watch: [:brand, :model, :price])
+  end
 end
